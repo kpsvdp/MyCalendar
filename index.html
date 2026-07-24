@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A private, device-based calendar for birthdays, holidays, shifts, events and daily notes."
+    />
+    <meta name="theme-color" content="#f7f3ec" />
+    <title>My Calendar</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+    <script src="assets/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#calendar-grid">Skip to calendar</a>
+
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="My Calendar home">
+          <span class="brand-mark" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </span>
+          <span>My Calendar</span>
+        </a>
+
+        <div class="month-controls" aria-label="Calendar navigation">
+          <button class="icon-button" id="previous-month" type="button" aria-label="Previous month">
+            <span aria-hidden="true">‹</span>
+          </button>
+          <button class="secondary-button" id="today-button" type="button">Today</button>
+          <button class="icon-button" id="next-month" type="button" aria-label="Next month">
+            <span aria-hidden="true">›</span>
+          </button>
+          <h1 id="month-heading" aria-live="polite">Month</h1>
+        </div>
+
+        <div class="topbar-actions">
+          <label class="search-control" for="calendar-search">
+            <span aria-hidden="true">⌕</span>
+            <input
+              id="calendar-search"
+              type="search"
+              placeholder="Search calendar"
+              autocomplete="off"
+            />
+          </label>
+          <button
+            class="icon-button"
+            id="theme-button"
+            type="button"
+            aria-label="Switch colour theme"
+            title="Switch colour theme"
+          >
+            <span aria-hidden="true">◐</span>
+          </button>
+          <button
+            class="icon-button"
+            id="data-button"
+            type="button"
+            aria-label="Open data tools"
+            aria-haspopup="menu"
+            aria-expanded="false"
+          >
+            <span aria-hidden="true">•••</span>
+          </button>
+          <button class="primary-button" id="add-item-button" type="button">
+            <span aria-hidden="true">＋</span>
+            Add item
+          </button>
+        </div>
+
+        <div class="data-menu" id="data-menu" role="menu" hidden>
+          <button type="button" id="export-button" role="menuitem">Export backup</button>
+          <label role="menuitem" tabindex="0">
+            Import backup
+            <input id="import-input" type="file" accept="application/json,.json" hidden />
+          </label>
+          <button class="danger-text" type="button" id="clear-button" role="menuitem">
+            Clear all data
+          </button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="calendar-card" aria-labelledby="month-heading">
+          <div class="mobile-month-row">
+            <button class="icon-button" id="mobile-previous-month" type="button" aria-label="Previous month">
+              <span aria-hidden="true">‹</span>
+            </button>
+            <strong id="mobile-month-heading">Month</strong>
+            <button class="icon-button" id="mobile-next-month" type="button" aria-label="Next month">
+              <span aria-hidden="true">›</span>
+            </button>
+          </div>
+
+          <div class="filter-row" aria-label="Filter calendar items">
+            <button class="filter-pill active" type="button" data-filter="all" aria-pressed="true">
+              All
+            </button>
+            <button class="filter-pill" type="button" data-filter="birthday" aria-pressed="true">
+              <span class="dot birthday"></span>Birthdays
+            </button>
+            <button class="filter-pill" type="button" data-filter="holiday" aria-pressed="true">
+              <span class="dot holiday"></span>Holidays
+            </button>
+            <button class="filter-pill" type="button" data-filter="shift" aria-pressed="true">
+              <span class="dot shift"></span>Shifts
+            </button>
+            <button class="filter-pill" type="button" data-filter="event" aria-pressed="true">
+              <span class="dot event"></span>Events
+            </button>
+            <button class="filter-pill" type="button" data-filter="note" aria-pressed="true">
+              <span class="dot note"></span>Notes
+            </button>
+          </div>
+
+          <div class="weekday-row" aria-hidden="true">
+            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span>
+            <span>Fri</span><span>Sat</span><span>Sun</span>
+          </div>
+
+          <div
+            class="calendar-grid"
+            id="calendar-grid"
+            role="grid"
+            aria-label="Monthly calendar"
+          ></div>
+
+          <div class="calendar-footer">
+            <div class="legend" aria-label="Calendar colour key">
+              <span><i class="dot birthday"></i>Birthday</span>
+              <span><i class="dot holiday"></i>Holiday</span>
+              <span><i class="dot shift"></i>Work shift</span>
+              <span><i class="dot event"></i>Event</span>
+              <span><i class="dot note"></i>Daily note</span>
+            </div>
+            <span class="storage-message">Saved privately on this device</span>
+          </div>
+        </section>
+
+        <aside class="agenda-panel" aria-labelledby="agenda-title">
+          <div class="agenda-heading">
+            <div>
+              <p class="eyebrow">Selected day</p>
+              <h2 id="agenda-title">Today</h2>
+              <p id="agenda-date">Date</p>
+            </div>
+            <button
+              class="small-primary-button"
+              id="add-selected-button"
+              type="button"
+              aria-label="Add an item to the selected day"
+            >
+              ＋ Add
+            </button>
+          </div>
+
+          <div class="day-summary" id="day-summary"></div>
+          <div class="agenda-list" id="agenda-list"></div>
+
+          <section class="quick-note">
+            <div class="quick-note-heading">
+              <div>
+                <p class="eyebrow">Day-to-day notepad</p>
+                <h3>Quick note</h3>
+              </div>
+              <span id="note-status" aria-live="polite">Saved</span>
+            </div>
+            <textarea
+              id="quick-note"
+              rows="5"
+              maxlength="2000"
+              placeholder="Write anything you need to remember for this day…"
+            ></textarea>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <dialog class="item-dialog" id="item-dialog" aria-labelledby="dialog-title">
+      <form id="item-form" method="dialog">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow" id="dialog-eyebrow">New calendar item</p>
+            <h2 id="dialog-title">Add item</h2>
+          </div>
+          <button class="icon-button close-button" id="close-dialog" type="button" aria-label="Close">
+            ×
+          </button>
+        </div>
+
+        <input id="item-id" type="hidden" />
+
+        <div class="form-grid">
+          <label class="field field-wide">
+            <span>Title</span>
+            <input id="item-title" name="title" required maxlength="80" placeholder="What is happening?" />
+          </label>
+
+          <label class="field">
+            <span>Item type</span>
+            <select id="item-type" name="type">
+              <option value="event">Event</option>
+              <option value="birthday">Birthday</option>
+              <option value="holiday">Holiday</option>
+              <option value="shift">Work shift</option>
+              <option value="note">Daily note</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Date</span>
+            <input id="item-date" name="date" type="date" required />
+          </label>
+
+          <label class="field shift-only" id="shift-preset-field" hidden>
+            <span>Shift pattern</span>
+            <select id="shift-preset" name="shiftPreset">
+              <option value="">Custom</option>
+              <option value="morning">Morning · 07:00–15:00</option>
+              <option value="afternoon">Afternoon · 15:00–23:00</option>
+              <option value="night">Night · 23:00–07:00</option>
+              <option value="extra">Extra shift</option>
+              <option value="leave">Leave</option>
+            </select>
+          </label>
+
+          <label class="field time-field">
+            <span>Starts</span>
+            <input id="start-time" name="start" type="time" />
+          </label>
+
+          <label class="field time-field">
+            <span>Ends</span>
+            <input id="end-time" name="end" type="time" />
+          </label>
+
+          <label class="check-field field-wide">
+            <input id="all-day" name="allDay" type="checkbox" />
+            <span>All-day item</span>
+          </label>
+
+          <label class="check-field field-wide birthday-only" id="birthday-repeat-field" hidden>
+            <input id="repeat-annual" name="repeatAnnual" type="checkbox" checked />
+            <span>Repeat this birthday every year</span>
+          </label>
+
+          <label class="field field-wide">
+            <span>Details <small>optional</small></span>
+            <textarea
+              id="item-details"
+              name="details"
+              rows="4"
+              maxlength="600"
+              placeholder="Add a location, reminder or other details…"
+            ></textarea>
+          </label>
+        </div>
+
+        <div class="dialog-actions">
+          <button class="danger-button" id="delete-item" type="button" hidden>Delete</button>
+          <span class="action-spacer"></span>
+          <button class="secondary-button" id="cancel-dialog" type="button">Cancel</button>
+          <button class="primary-button" type="submit">Save item</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
